@@ -144,4 +144,42 @@ WHERE sal * 12 + NVL(comm, 0) BETWEEN 8800 AND 15000;
 
 ## 📌 트러블 슈팅
 
+### 문제 상황
+다음 SQL을 실행했을 때, 기대했던 결과가 나오지 않음:
+
+```
+SELECT hiredate
+FROM emp
+WHERE hiredate = TO_DATE('81/09/28','YY/MM/DD');
+```
+hiredate에 1981-09-28이 저장되어 있음.
+
+
+결과 행이 출력되지 않음.
+
+### 🎯 원인 분석
+TO_DATE() 함수의 연도 포맷(YY) 처리 방식 때문.
+
+YY는 현재 세기의 2자리 연도를 나타냄:
+
+81 → 2081년으로 해석됨.
+
+따라서 조건이 아래와 같아짐:
+
+
+WHERE hiredate = DATE '2081-09-28'
+hiredate 값이 1981년이므로 비교 결과 불일치.
+
+### ✅ 해결 방법
+연도 포맷을 정확하게 지정해야 함.
+
+아래 방법 중 하나를 사용:
+
+1️⃣ YYYY (4자리 연도)
+
+SELECT hiredate
+FROM emp
+WHERE hiredate = TO_DATE('1981/09/28','YYYY/MM/DD');
+→ 1981년으로 정확히 인식.
+
 ---
